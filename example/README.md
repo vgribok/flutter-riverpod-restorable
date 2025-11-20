@@ -1,16 +1,48 @@
-# example
+# Riverpod Restorable Example
 
-A new Flutter project.
+Demonstrates ephemeral state restoration with Riverpod v.3.
 
-## Getting Started
+## Running the Example
 
-This project is a starting point for a Flutter application.
+```bash
+cd example
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Testing State Restoration
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### iOS Simulator
+1. Run the app
+2. Increment the counter
+3. Press Home button (Cmd+Shift+H)
+4. Stop the app from Xcode or `flutter run`
+5. Relaunch the app
+6. Counter value should be preserved
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Android Emulator
+1. Enable Developer Options
+2. Enable "Don't keep activities"
+3. Run the app and increment counter
+4. Press Home button
+5. Return to app
+6. Counter value should be preserved
+
+## Code Overview
+
+```dart
+// Define restorable provider
+final counterProvider = restorableProvider<RestorableInt>(
+  create: (ref) => RestorableInt(0),
+  restorationId: 'counter',
+);
+
+// Wrap app with RestorableProviderScope
+RestorableProviderScope(
+  restorationId: 'main',
+  child: const HomePage(), // Auto-discovers all providers
+)
+
+// Use in widgets
+final counter = ref.watch(counterProvider);
+counter.value++; // Triggers rebuild and saves state
+```
